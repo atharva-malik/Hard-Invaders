@@ -16,16 +16,22 @@ class Game:
             'xxx     xxx',
             'xx       xx']
         self.blocks = pygame.sprite.Group()
-        self.build_fortification()
+        self.fortification_pos = [num * 180 for num in range(4)]
+        print(self.fortification_pos)
+        self.build_multiple_forts(57, 480, self.fortification_pos)
     
-    def build_fortification(self):
+    def build_fortification(self, x_offset, y_offset, offset):
         for row_index, row in enumerate(self.shape):
             for column_index, column in enumerate(row):
                 if column == "x":
-                    x_coordinate = column_index * 6
-                    y_coordinate = row_index * 6
+                    x_coordinate = column_index * 6 + x_offset + offset
+                    y_coordinate = row_index * 6 + y_offset
                     block = Fortification(6, (241, 79, 80), x_coordinate, y_coordinate)
                     self.blocks.add(block)
+    
+    def build_multiple_forts(self, start_x, start_y, nums):
+        for i in nums:
+            self.build_fortification(start_x, start_y, i)
     
     def generate_enemies(self):
         pass
@@ -49,7 +55,7 @@ class Spaceship(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("Assets\player.png").convert_alpha()
-        self.rect = self.image.get_rect(midbottom=(640,680))
+        self.rect = self.image.get_rect(midbottom=(360,680))
         self.speed = 8
         self.can_shoot = True
         self.bullet_time = 0

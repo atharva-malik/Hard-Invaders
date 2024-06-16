@@ -3,7 +3,7 @@ import pygame, sys, os
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((720, 720))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Space Invaders')
 pygame.display.set_icon(pygame.image.load('Assets/Icon.png'))
