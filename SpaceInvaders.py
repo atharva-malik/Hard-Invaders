@@ -25,6 +25,9 @@ class Spaceship(pygame.sprite.Sprite):
         self.image = pygame.image.load("Assets\player.png").convert_alpha()
         self.rect = self.image.get_rect(midbottom = (640,680))
         self.speed = 8
+        self.can_shoot = True
+        self.bullet_time = 0
+        self.bullet_cooldown = 600
     
     def update(self):
         self.get_input()
@@ -36,8 +39,13 @@ class Spaceship(pygame.sprite.Sprite):
         elif (keys[pygame.K_d] or keys[pygame.K_RIGHT]) and self.rect.x < 1210:
             self.rect.x += self.speed
         
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] and self.can_shoot:
             self.shoot()
+            self.can_shoot = False
+            self.bullet_time = pygame.time.get_ticks()
+        
+        if pygame.time.get_ticks() - self.bullet_time >= self.bullet_cooldown:
+            self.can_shoot = True
     
     def shoot(self):
         print("shot")
@@ -77,3 +85,6 @@ class Legendary_Enemy(Enemy):
     def __init__(self):
         super().__init__()
     
+
+if __name__ == "__main__":
+    import main.py # Run the game
