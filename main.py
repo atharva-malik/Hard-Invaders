@@ -18,7 +18,7 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            os.system('cls') #TODO: Remove in the final release
+            # os.system('cls') #TODO: Remove in the final release
             sys.exit()
 
     # fill the screen with a color to wipe away anything from last frame
