@@ -6,13 +6,11 @@ class Game:
         self.level = level
         self.game_over = 0
         
-        music = pygame.mixer.Sound("Assets/music.wav")
-        music.set_volume(0.2)
-        music.play(loops=-1 )
+        self.music = pygame.mixer.Sound("Assets/music.wav")
+        self.music.set_volume(0.2)
+        self.music.play(loops=-1 )
         self.bullet_sound = pygame.mixer.Sound("Assets/bullet.wav")
         self.bullet_sound.set_volume(0.1)
-        self.explosion_sound = pygame.mixer.Sound("Assets/explosion.wav")
-        self.explosion_sound.set_volume(0.3)
         
         self.player = pygame.sprite.GroupSingle(Spaceship())
         self.lives = lives
@@ -106,16 +104,23 @@ class Game:
             elif enemy.rect.left <= 0:
                 self.enemy_direction = 1
                 self.enemy_move_down(2)
-    #TODO: FINISH THIS
+    
     def enemy_shoot(self):
         self.enemy_cooldown += 1
         if self.enemies.sprites() and self.enemy_cooldown > (60/(self.level+1)): #* The second number is the lasers per second
             randEnemy = choice(self.enemies.sprites())
-            # bullet = randEnemy.shoot() #TODO: Implement this
-            bullet = Bullet(randEnemy.rect.center, -6, "red")
+            bullet = randEnemy.shoot()
             self.enemy_bullets.add(bullet)
             self.enemy_cooldown = 0
             self.bullet_sound.play()
+    
+    def legendary_shoot(self):
+        if self.legendary.sprites() != []:
+            if randint(1,1000) <= 50:
+                b1, b2, b3 = self.legendary.sprite.shoot()
+                self.enemy_bullets.add(b1)
+                self.enemy_bullets.add(b2)
+                self.enemy_bullets.add(b3)
     
     def legendary_spawner(self):
         self.legend_spawn_time -= 1
@@ -126,10 +131,10 @@ class Game:
     
     def display_lives_score(self, screen):
         score = self.font.render("Score: " + str(self.score), False, 'white')
-        score_rect = score.get_rect(center=(80,20))
+        score_rect = score.get_rect(topleft=(10,0))
         screen.blit(score, score_rect)
         score = self.font.render("Health: " + str(self.lives), False, 'white')
-        score_rect = score.get_rect(center=(620,20))
+        score_rect = score.get_rect(topright=(710,0))
         screen.blit(score, score_rect)
     
     def check_collisions(self):
@@ -137,12 +142,12 @@ class Game:
             for bul in self.player.sprite.bullets:
                 if pygame.sprite.spritecollide(bul, self.blocks, True):
                     bul.kill()
-                enemy_hit_list = pygame.sprite.spritecollide(bul, self.enemies, True)
+                enemy_hit_list = pygame.sprite.spritecollide(bul, self.enemies, False)
                 if enemy_hit_list:
                     for enemy in enemy_hit_list:
+                        enemy.health -= 1
                         self.score += enemy.value
-                    bul.kill()
-                    self.explosion_sound.play()
+                        bul.kill()
                 if pygame.sprite.spritecollide(bul, self.legendary, True):
                     self.score += 1000
                     bul.kill()
@@ -153,8 +158,8 @@ class Game:
             for en in self.enemies:
                 pygame.sprite.spritecollide(en, self.blocks, True)
                 if pygame.sprite.spritecollide(en, self.player, True):
-                    pygame.quit() #TODO: FIX
-                    sys.exit()
+                    self.game_over = -1
+                    self.lives = -1
         if self.enemy_bullets:
             for bul in self.enemy_bullets:
                 if pygame.sprite.spritecollide(bul, self.blocks, True):
@@ -164,12 +169,11 @@ class Game:
                     self.lives -= 1
                     if self.lives <= 0:
                         self.game_over = -1
-                        pygame.quit() #TODO: FIX
-                        sys.exit()
     
     def victory_message(self, screen):
         if not self.enemies.sprites():
             self.game_over = 1
+            screen.fill((30,30,30))
             victory = self.font.render('You Won', False, 'white')
             victory_rect = victory.get_rect(center=(360,360))
             screen.blit(victory, victory_rect)
@@ -183,6 +187,7 @@ class Game:
             self.enemy_bullets.update()
             self.enemy_bullets.draw(screen)
             self.legendary_spawner()
+            self.legendary_shoot()
             self.legendary.draw(screen)
             self.legendary.update()
             
@@ -195,9 +200,12 @@ class Game:
             
             self.blocks.draw(screen)
             self.enemies.draw(screen)
+            return None, 0, None
         elif self.game_over == -1:
-            return 0, 0, 1
+            self.music.stop()
+            return 0, self.score, -1
         elif self.game_over == 1:
+            self.music.stop()
             return self.level+1, self.score, self.lives+1
 
 class Spaceship(pygame.sprite.Sprite):
@@ -247,15 +255,24 @@ class Fortification(pygame.sprite.Sprite):
     
 
 class Enemy(pygame.sprite.Sprite):
-    # Spawn Rates: 78, 15, 5, 2 
-    def __init__(self, type, x, y, val=10):
+    def __init__(self, type, x, y, health=1, val=10):
         super().__init__()
         self.image = pygame.image.load("Assets/Alien_" + type + ".png").convert_alpha()
         self.rect = self.image.get_rect(topleft=(x,y))
         self.value = val
+        self.health = health
+        self.explosion_sound = pygame.mixer.Sound("Assets/explosion.wav")
+        self.explosion_sound.set_volume(0.3)
+    
+    def shoot(self):
+        bullet = Bullet(self.rect.center, -6, "red")
+        return bullet
     
     def update(self, direction):
         self.rect.x += direction
+        if self.health <= 0:
+            self.explosion_sound.play()
+            self.kill()
     
 
 class Rare_Enemy(Enemy):
@@ -265,12 +282,12 @@ class Rare_Enemy(Enemy):
 
 class Epic_Enemy(Enemy):
     def __init__(self, x, y):
-        super().__init__("Epic", x, y, 20)
+        super().__init__("Epic", x, y, 2, 20)
     
 
 class Mythic_Enemy(Enemy):
     def __init__(self, x, y):
-        super().__init__("Mythic", x, y, 40)
+        super().__init__("Mythic", x, y, 3, 40)
     
 
 #* The behaviour of this enemy is so different to the normal enemies
@@ -290,6 +307,12 @@ class Legendary_Enemy(pygame.sprite.Sprite):
     def update(self):
         self.rect.x += self.speed
     
+    def shoot(self):
+        x, y = self.rect.center
+        bullet1 = Bullet((x-20, y), -6, "red")
+        bullet2 = Bullet((x, y), -6, "red")
+        bullet3 = Bullet((x+20, y), -6, "red")
+        return bullet1, bullet2, bullet3
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, position, speed=8, colour="yellow"):
