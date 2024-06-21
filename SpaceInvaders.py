@@ -218,7 +218,7 @@ class Spaceship(pygame.sprite.Sprite):
         self.speed = 8
         self.can_shoot = True
         self.bullet_time = 0
-        self.bullet_cooldown = 600
+        self.bullet_cooldown = 450
         
         self.bullets = pygame.sprite.Group()
     
