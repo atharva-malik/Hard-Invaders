@@ -203,7 +203,7 @@ class Game:
             return None, 0, None
         elif self.game_over == -1:
             self.music.stop()
-            return 0, self.score, -1
+            return self.level, self.score, -1
         elif self.game_over == 1:
             self.music.stop()
             return self.level+1, self.score, self.lives+1

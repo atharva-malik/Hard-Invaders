@@ -43,7 +43,9 @@ def play():
             break
     if lives == -1:
         lives = 1
-        defeat(level, score)
+        l = level
+        level = 0
+        defeat(l, score)
     elif last_score == score and score != 0:
         victory()
 
