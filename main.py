@@ -44,7 +44,9 @@ def play():
     if lives == -1:
         lives = 1
         l = level
+        s = score
         level = 0
+        score = 0
         defeat(l, score)
     elif last_score == score and score != 0:
         victory()

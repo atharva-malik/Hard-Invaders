@@ -279,15 +279,28 @@ class Rare_Enemy(Enemy):
     def __init__(self, x, y):
         super().__init__("Rare", x, y)
     
+    def shoot(self):
+        bullet = Bullet(self.rect.center, -6, (255, 196, 0))
+        return bullet
+    
 
 class Epic_Enemy(Enemy):
     def __init__(self, x, y):
         super().__init__("Epic", x, y, 2, 20)
     
+    def shoot(self):
+        bullet = Bullet(self.rect.center, -6, (255, 128, 0))
+        return bullet
+    
+
 
 class Mythic_Enemy(Enemy):
     def __init__(self, x, y):
         super().__init__("Mythic", x, y, 3, 40)
+    
+    def shoot(self):
+        bullet = Bullet(self.rect.center, -6, "red")
+        return bullet
     
 
 #* The behaviour of this enemy is so different to the normal enemies
