@@ -1,3 +1,8 @@
+"""This is the main file of the Space Invaders game.
+
+This file initialises everything and contains the loop that runs the game logic contained within the classes imported from the 'SpaceInvaders' file. 
+"""
+
 from SpaceInvaders import *
 from button import Button
 import pygame, sys
@@ -8,32 +13,32 @@ screen = pygame.display.set_mode((720, 720))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Space Invaders')
 pygame.display.set_icon(pygame.image.load('Assets/Icon.png'))
-level, score, last_score, lives = 10, 0, 0, 1000
+level, score, last_score, lives = 1, 0, 0, 1000
 dt = 0
 
 def play():
+    """
+    The `play()` function is the main game loop that runs the Space Invaders game. It initializes a `Game`
+    object with the current level, score, and lives, and then enters a game loop that handles user input, 
+    updates the game state, and renders the game on the screen. The loop continues until the player either 
+    wins the current level or loses all their lives. If the player wins, the function breaks out of the loop
+    and returns to the main menu. If the player loses, the function calls the `defeat()` function to handle 
+    the game over state.
+    """
     global level, score, last_score, lives
     game = Game(level=level, score=score, lives=lives)
     screen.fill((30,30,30))
     while True:
-        # poll for events
-        # pygame.QUIT event means the user clicked X to close your window
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
-        # fill the screen with a color to wipe away anything from last frame
+        
         screen.fill((30,30,30))
         level, score, lives = game.update(screen)
-        # flip() the display to put your work on screen
         pygame.display.flip()
-        # limits FPS to 60
-        # dt is delta time in seconds since last frame, used for framerate-
-        # independent physics.
         dt = clock.tick(60) / 1000
         if int(score) > last_score:
-            #pygame.quit()
             last_score = score
             break
         elif lives == -1:
@@ -49,6 +54,13 @@ def play():
         victory()
 
 def main_menu():
+    """
+    The `main_menu()` function is responsible for displaying the main menu of the Space Invaders game. 
+    It creates a window with a title, icon, and a background color. The function then creates two buttons,
+    one for starting the game and one for quitting the game. The function enters a game loop that handles
+    user input, updates the game state, and renders the game on the screen. The loop continues until the 
+    player either starts the game or quits the application.
+    """
     font = pygame.font.Font("Assets/Pixeled.ttf", 40)
     font2 = pygame.font.Font("Assets/Pixeled.ttf", 20)
     while True:
@@ -81,6 +93,14 @@ def main_menu():
         pygame.display.update()
 
 def victory():
+    """
+    The `victory()` function is responsible for displaying the victory screen when the player completes
+    a level in the Space Invaders game. It creates a window with a title, icon, and a background color. 
+    The function then creates two buttons, one for continuing to the next level and one for quitting the
+    game. The function enters a game loop that handles user input, updates the game state, and renders the
+    game on the screen. The loop continues until the player either continues to the next level or quits the
+    application.
+    """
     font = pygame.font.Font("Assets/Pixeled.ttf", 40)
     font2 = pygame.font.Font("Assets/Pixeled.ttf", 20)
     while True:
@@ -113,6 +133,17 @@ def victory():
         pygame.display.update()
 
 def defeat(level, score):
+    """
+    The `defeat()` function is responsible for displaying the defeat screen when the player fails a level
+    in the Space Invaders game. It creates a window with a title, icon, and a background color. The function
+    then creates two buttons, one for playing the level again and one for quitting the game. The function 
+    enters a game loop that handles user input, updates the game state, and renders the game on the screen.
+    The loop continues until the player either plays the level again or quits the application.
+    
+    Args:
+        level (int): The last level of the game.
+        score (int): The last score of the player.
+    """
     font = pygame.font.Font("Assets/Pixeled.ttf", 40)
     font2 = pygame.font.Font("Assets/Pixeled.ttf", 20)
     while True:
@@ -150,7 +181,4 @@ def defeat(level, score):
                     sys.exit()
         pygame.display.update()
 
-while True:
-    main_menu()
-    if input("Yes: ") != "y":
-        break
+main_menu()
