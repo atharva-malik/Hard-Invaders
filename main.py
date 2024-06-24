@@ -1,6 +1,6 @@
 from SpaceInvaders import *
 from button import Button
-import pygame, sys, os
+import pygame, sys
 
 # pygame setup
 pygame.init()
@@ -8,7 +8,7 @@ screen = pygame.display.set_mode((720, 720))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Space Invaders')
 pygame.display.set_icon(pygame.image.load('Assets/Icon.png'))
-level, score, last_score, lives = 0, 0, 0, 1
+level, score, last_score, lives = 10, 0, 0, 1000
 dt = 0
 
 def play():
@@ -37,8 +37,6 @@ def play():
             last_score = score
             break
         elif lives == -1:
-            print(level, score)
-            #sys.exit()
             break
     if lives == -1:
         lives = 1
