@@ -21,7 +21,6 @@ def play():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                os.system('cls') #TODO: Remove in the final release
                 sys.exit()
 
         # fill the screen with a color to wipe away anything from last frame
@@ -121,7 +120,7 @@ def defeat(level, score):
     while True:
         defeat_mouse_position = pygame.mouse.get_pos()
 
-        defeat_text = font.render("Level " + str(level) + " Failed!", False, "red")
+        defeat_text = font.render("Level " + str(level+1) + " Failed!", False, "red")
         defeat_rect = defeat_text.get_rect(center=(360, 100))
 
         defeat2_text = font.render((f"Score: {score}"), False, "white")
