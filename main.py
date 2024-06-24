@@ -47,7 +47,7 @@ def play():
         s = score
         level = 0
         score = 0
-        defeat(l, score)
+        defeat(l, s)
     elif last_score == score and score != 0:
         victory()
 
